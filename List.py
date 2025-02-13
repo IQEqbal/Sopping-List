@@ -1,125 +1,137 @@
-_list = {}    # shopping list
-print("This is your lsit write something you want ")
-chose = 0
+shopping_list = {}    # Shopping list
+print("This is your list. Write something you want to add.")
+choice = None
 
-
-# for get first things
-print("if it's enough write (exit) or (Exit)")
+# Geting the initial items for the shopping list
+print("if you're done, type (exit) or (Exit)")
 while True :
     try:
-        thing = input("name of thing : ")
-        thing = thing.upper()
-        thing = thing.strip()
-        if thing == "EXIT" :
+        item = input("Enter the name of item : ").strip().upper()
+        if item == "EXIT" :
+            print("The items you wrote have been added to the list.")
             break
-        assert len(thing)>0
-        much = input(f"how many {thing} you need : ")
-        
-        
-        if thing not in _list :
-            _list[thing] = much 
+        assert len(item)>0
+        much = input(f"How many {item} do you need? : ")
+        if item not in shopping_list :
+            shopping_list[item] = much 
+            print()
         else :
-            print("already this thing added in the list ")
-            
-    except :
-        print("you can't give an empty input")
+            print("This item is already in the list.")
+    except AssertionError :
+        print("you can't enter an empty input")
     
-    
-      
-# function for select the options
+       
+# Function for selecting the options
 def select() :
-        print("""chose one number 
-                1 = add thing in the list
-                2 = see yuar list
-                3 = remove thing of list
-                4 = adding list in file'list.txt' 
-                5 = exit in list """)
+        print("""Choose a number 
+                1 = Add thing in the list.
+                2 = See your list.
+                3 = Remove an item from the list.
+                4 = View the file 'list.txt'
+                5 = Add the list to file 'list.txt' 
+                6 = Exit the program """)
         while True :     
             try:  
-                chose = int(input("select a number :"))
-                assert chose > 0 
-                assert chose < 6
+                choice = int(input("select a number :"))
+                assert 0 < choice < 7
                 break
-            except:
-                print("try agin")
-        return chose
+            except AssertionError :
+                print("please select a valid number")
+            except ValueError :
+                print("please enter a number")
+        return choice
     
     
 while True: 
-    if chose == 0 :    
-        chose = select()
+    if choice == None :    
+        choice = select()
 
- # add to the list           
-    if chose == 1 :
-        print("if it's enough write (exit) or (Exit)")
+    # Adding new items to the shopping list         
+    if choice == 1 :
+        print("if you're done, type (exit) or (Exit)")
         while True :
             try:
-                thing = input("add in the list :")
-                thing = thing.upper()
-                thing = thing.strip()
-                if thing == "EXIT" :
+                item = input("Add to the list :").strip().upper()
+                if item == "EXIT" :
                     break
-                assert len(thing)>0 
-                much = input(f"how many {thing} you need : ")
+                assert len(item)>0 
+                much = input(f"How many {item} do you need? : ")
                 
-                if thing not in _list :
-                    _list[thing] = much
+                if item not in shopping_list :
+                    shopping_list[item] = much
                 else:
-                    print("already this thing added in the list ")
-            except :
+                    print("This item is already in the list.")
+            except AssertionError :
                 print("you can't give an empty input")
          
-        chose = select()  
-        print()
-        print()
+        choice = select()  
+        print() 
+
         
- # show the list 
-    if chose == 2 :
-        print(_list)
-        print("""
-              """)
-        chose = select()
+    # Showing the list 
+    if choice == 2 :
+        for i in shopping_list :
+            print(i  ,  shopping_list[i] , sep=":")
+        print()
+        choice = select()
 
 
- # lowering from the list 
-    if chose == 3 :
-        print(_list)
-        print("if it's enough write (exit) or (Exit)")
+    # Removing an item from the shopping list
+    if choice == 3 :
+        print(shopping_list)
+        print("if you're done, type (exit) or (Exit)")
         while True :
             try :
-                thing = input("intr thing to remove in list :")
-                thing = thing.upper()
-                thing = thing.strip()
-                assert len(thing)>0
-                if thing == "EXIT":
+                item = input("Entr the item to remove from the list :").strip().upper()
+                assert len(item) > 0
+                if item == "EXIT":
                     break    
-                elif thing in _list :
-                   print(f"the {thing} is successfully removed from the list")
-                   del _list[thing]
+                elif item in shopping_list :
+                   print(f"the {item} has been successfully removed from the list")
+                   del shopping_list[item]
                 else :
-                    print("that is not in list ")
-            except :
-                print("you can't give an empty input")
-        chose = select()
-        print("""
-              """)
-             
-    #  adding list in the file           
-    if chose == 4 :
-        with open("list.txt" , "w") as file :
+                    print("That item is not in the list ")
+            except AssertionError :
+                print("you can't enter an empty input")
+        choice = select()
+        print()
+      
+    # Reading file 'list.txt'       
+    if choice == 4 :
+        try:
+            with open("list.txt","r") as file :
+               print(file.read())
+        except FileNotFoundError :
+            print("The file does not exist.")
+            print("if you want to create it. go to option 5 and type 'Yes'")
+            
+    choice = select()
+    
+                           
+    # Saving the shopping list to the file 'list.txt'           
+    if choice == 5 :
+        while True :
+            try :
+                print("Do you want to delete the previous list? (Yes or No)")
+                question = input('please write "Yes" or "No" : ').strip().upper()
+                assert question == "YES" or question == "NO"
+                break
+            except AssertionError :
+                print("please choose one.")  
+                  
+        if question == "YES" :
+            with open("list.txt" , "w") as file :
+                pass
+        elif question == "NO" :
             pass
         with open("list.txt" ,"a+") as file :
-            for i in _list:
-                file.write(f"{i} ---> {_list[i]}\n")
-        print("added list in the file'list.txt'")
-                
-        chose = select()
+            for i in shopping_list:
+                file.write(f"{i} ---> {shopping_list[i]}\n")
+        print("The list has been added to the file 'list.txt'")
+        
+        choice = select()
         
         
-    if  chose == 5 :
-        print("have a nice day!")
-        break
-    
-    
-    
-    
+    if  choice == 6 :
+        print("Have a nice day.")
+        break   
